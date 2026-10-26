@@ -1,0 +1,108 @@
+Stage 1  Basic FastAPI             ✅
+Stage 2  /health                   ✅
+Stage 3  ModelLoader               ✅
+Stage 4  /metadata                 🔨 NOW
+Stage 5  /predict                  ⏭️
+Stage 6  Schemas                   ⏭️
+Stage 7  Validation + errors       ⏭️
+Stage 8  Batch prediction          ⏭️
+Stage 9  API tests                 ⏭️
+Stage 10 Performance               ⏭️
+Stage 11 Reports/documentation     ⏭️
+
+Stage 1  → Basic FastAPI app              ✅
+Stage 2  → /health                         ✅
+Stage 3  → ModelLoader                     ✅
+Stage 4  → /metadata                       ✅
+Stage 5  → /predict                        ← NOW
+Stage 6  → Pydantic input/output schemas
+Stage 7  → Validation + standardized errors
+Stage 8  → Batch prediction
+Stage 9  → API testing
+Stage 10 → Invalid/extreme/corrupted input
+Stage 11 → Performance/reliability
+Stage 12 → Reports + documentation
+
+
+| Stage  | Task                                    | Status                      |
+| ------ | --------------------------------------- | --------------------------- |
+| **1**  | Basic FastAPI app                       | ✅ Complete                  |
+| **2**  | `/health`                               | ✅ Complete                  |
+| **3**  | `ModelLoader`                           | ✅ Complete                  |
+| **4**  | `/metadata`                             | ✅ Complete                  |
+| **5**  | `/predict`                              | ✅ Complete                  |
+| **6**  | Pydantic input/output schemas           | 🔨 **Currently completing** |
+| **7**  | Validation + standardized errors        | ⏭️ Next                     |
+| **8**  | Batch prediction                        | ⏭️                          |
+| **9**  | API testing                             | ⏭️                          |
+| **10** | Invalid/extreme/corrupted input testing | ⏭️                          |
+| **11** | Performance + reliability               | ⏭️                          |
+| **12** | Reports + documentation                 | ⏭️                          |
+
+Stage 7 status
+Requirement	Status
+Pydantic input validation	✅
+Invalid categorical values	✅
+Invalid numeric ranges	✅
+Missing fields	✅
+Multiple validation errors	✅
+Standardized 422 response	✅
+Model/preprocessor readiness check	✅
+Standardized 503 response	✅
+Unexpected runtime exception handling	✅
+Normal prediction after changes	✅
+
+/predict architecture is now
+                  POST /predict
+                       │
+                       ▼
+              CustomerInput
+                       │
+             Pydantic validation
+                       │
+              ┌────────┴────────┐
+              │                 │
+           Invalid             Valid
+              │                 │
+              ▼                 ▼
+         Standard 422      is_ready()?
+                                │
+                         ┌──────┴──────┐
+                         │             │
+                       False          True
+                         │             │
+                         ▼             ▼
+                    Standard 503    try:
+                                      │
+                              ┌───────┴────────┐
+                              │                │
+                           Failure          Success
+                              │                │
+                              ▼                ▼
+                         Standard 500       HTTP 200
+
+Stage 8 — Batch Prediction
+
+8.1 Batch request schema       ✅
+8.2 Batch response schema      ✅
+8.3 Batch endpoint             ✅
+8.4 Batch preprocessing       ✅
+8.5 Batch inference            ✅
+8.6 Batch response             ✅
+8.7 Batch validation           ✅
+
+
+| Stage                                       | Status    |
+| ------------------------------------------- | --------- |
+| 1. Basic FastAPI app                        | ✅         |
+| 2. `/health`                                | ✅         |
+| 3. ModelLoader                              | ✅         |
+| 4. `/metadata`                              | ✅         |
+| 5. `/predict`                               | ✅         |
+| 6. Pydantic input/output schemas            | ✅         |
+| 7. Validation + standardized errors         | ✅         |
+| 8. Batch prediction                         | ✅         |
+| 9. API testing                              | ✅ 12/12   |
+| 10. Invalid/extreme/corrupted input testing | ✅ 23/23   |
+| **11. Performance & reliability**           | **✅ 6/6** |
+| 12. Reports + documentation                 | ⏳         |

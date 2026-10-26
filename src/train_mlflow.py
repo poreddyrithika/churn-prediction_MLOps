@@ -99,7 +99,7 @@ from sklearn.linear_model import LogisticRegression
 
 if __name__ == "__main__":
     # Baseline Run1
-    train_and_track(run_name="RandomForest")
+    train_and_track(run_name="RandomForest_KNN_Imputation")
 
     # run2
     # tuned_params = {

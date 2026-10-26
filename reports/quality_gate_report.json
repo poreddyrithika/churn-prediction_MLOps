@@ -1,0 +1,7 @@
+{
+    "stage": "Lab 8 - Model Quality Gate",
+    "metric": "recall",
+    "minimum_value": 0.7,
+    "actual_value": 0.7299,
+    "status": "PASSED"
+}

@@ -1,0 +1,16 @@
+{
+    "status": "success",
+    "model_name": "Telco_Churn_Production_Model",
+    "model_version": "1",
+    "run_id": "e6b24fcde8574a95a7bc1ce6da74b0dc",
+    "docker_image": "churn-prediction-api:model-v1",
+    "kubernetes_context": "docker-desktop",
+    "kubernetes_deployment": "churn-api",
+    "kubernetes_container": "churn-api",
+    "app_label": "churn-api",
+    "deployment_bundle": {
+        "model": "deployment\\model.pkl",
+        "preprocessor": "deployment\\preprocessor.pkl",
+        "metadata": "deployment\\model_metadata.json"
+    }
+}

@@ -1,0 +1,345 @@
+LAB 11 — DOCKER + KUBERNETES REFERENCE NOTES Project: churn-prediction
+Current stage: 11.14 — Kubernetes Service & Exposure
+
+============================================================ LAB 11
+ROADMAP ============================================================
+
+11.1 Containerization Architecture COMPLETE 11.2 Prepare Project for
+Docker COMPLETE 11.3 Create Dockerfile COMPLETE 11.4 Create
+.dockerignore COMPLETE 11.5 Build Docker Image COMPLETE 11.6 Run FastAPI
+Inside Docker COMPLETE 11.7 Containerized API Validation COMPLETE 11.8
+Local vs Container Prediction Consistency COMPLETE 11.9 Dependency
+Isolation/Reproducibility SKIPPED 11.10 Deployment Failure Simulation
+COMPLETE 11.11 Failure Debugging COMPLETE 11.12 Deployment Recovery
+COMPLETE 11.13 Kubernetes Deployment COMPLETE 11.14 Kubernetes Service &
+Exposure COMPLETE 11.15 Kubernetes Scaling NEXT 11.16 Kubernetes Service
+Interruption NEXT 11.17 Kubernetes Recovery Validation NEXT 11.18
+Containerization Report NEXT 11.19 Deployment/Debugging Report NEXT
+11.20 Final Lab 11 Validation NEXT
+
+Lab 13 is NOT treated as a separate lab. The complete MLOps project will
+be finished by the end of Labs 11 and 12.
+
+============================================================ MLFLOW →
+DEPLOYMENT ARCHITECTURE
+============================================================
+
+MLflow Registry ↓ Production Model Version ↓ Run ID ↓ Matching model +
+preprocessor ↓ Deployment Bundle deployment/ ├── model.pkl ├──
+preprocessor.pkl └── model_metadata.json ↓ Docker Image
+churn-prediction-api:1.0 ↓ Kubernetes ↓ Pod ↓ FastAPI :8000
+
+============================================================ MLFLOW
+PRODUCTION MODEL
+============================================================
+
+Model: Telco_Churn_Production_Model
+
+Production version: 1
+
+Stage: Production
+
+Run ID: e6b24fcde8574a95a7bc1ce6da74b0dc
+
+Model ID: m-0b44c639cae04d2da060f7b7f01e34d1
+
+Important principle: MLflow is the lifecycle/source of truth. The
+deployment bundle contains the Production model and the matching
+preprocessor from the SAME MLflow run.
+
+============================================================ DEPLOYMENT
+BUNDLE ============================================================
+
+deployment/ ├── model.pkl ├── preprocessor.pkl └── model_metadata.json
+
+Metadata: model_name = Telco_Churn_Production_Model model_version = 1
+model_stage = Production run_id = e6b24fcde8574a95a7bc1ce6da74b0dc
+model_source = models:/m-0b44c639cae04d2da060f7b7f01e34d1 model_id =
+m-0b44c639cae04d2da060f7b7f01e34d1 source = MLflow
+
+============================================================ DOCKER
+============================================================
+
+Image: churn-prediction-api:1.0
+
+Runtime dependencies: FastAPI Uvicorn Pydantic NumPy Pandas scikit-learn
+joblib PyYAML
+
+MLflow is NOT required at API runtime.
+
+Build: docker build -t churn-prediction-api:1.0 .
+
+Run: docker run –name churn-api -p 8000:8000 churn-prediction-api:1.0
+
+Check: docker ps docker logs churn-api
+
+Swagger: http://localhost:8000/docs
+
+API: GET /health GET /metadata POST /predict
+
+============================================================ LOCAL VS
+CONTAINER CONSISTENCY
+============================================================
+
+Same customer payload was tested locally and in Docker.
+
+Local prediction: 0
+
+Container prediction: 0
+
+Local churn probability: 0.41734259770833143
+
+Container churn probability: 0.41734259770833143
+
+Prediction match: True
+
+Probability match: True
+
+Conclusion: Local and container predictions are consistent.
+
+============================================================ 11.10 —
+FAILURE SIMULATION
+============================================================
+
+Simulated a missing model artifact.
+
+Command: docker exec churn-api mv /app/deployment/model.pkl
+/app/deployment/model_backup.pkl
+
+Restart: docker restart churn-api
+
+Failure: FileNotFoundError: Model not found: /app/deployment/model.pkl
+
+Result: Application startup failed.
+
+This satisfies the missing-artifact failure simulation.
+
+============================================================ 11.11 —
+FAILURE DEBUGGING
+============================================================
+
+Check: docker ps -a –filter “name=churn-api”
+
+Observed: Exited (3)
+
+Check: docker inspect churn-api –format “{{.State.Status}} |
+ExitCode={{.State.ExitCode}}”
+
+Observed: exited | ExitCode=3
+
+docker exec failed because the container was stopped.
+
+Root cause: model.pkl was missing from /app/deployment.
+
+Important debugging evidence: FileNotFoundError: Model not found:
+/app/deployment/model.pkl
+
+============================================================ 11.12 —
+DEPLOYMENT RECOVERY
+============================================================
+
+Recovery principle: Recreate the broken container from the known-good
+immutable image instead of manually repairing the corrupted container.
+
+Commands: docker rm churn-api docker run –name churn-api -p 8000:8000
+churn-prediction-api:1.0
+
+Successful recovery: [SUCCESS] Model loaded successfully. [SUCCESS]
+Preprocessor loaded successfully. [SUCCESS] ModelLoader initialization
+completed. INFO: Application startup complete. INFO: Uvicorn running on
+http://0.0.0.0:8000
+
+============================================================ KUBERNETES
+SETUP ============================================================
+
+kubectl client: v1.36.1
+
+Provisioning: Kind
+
+Kubernetes: v1.36.1
+
+Cluster control plane: https://127.0.0.1:53353
+
+Node: desktop-control-plane
+
+Node status: Ready
+
+Useful checks: kubectl cluster-info kubectl get nodes
+
+============================================================ KUBERNETES
+CONCEPTS ============================================================
+
+Docker: Packages and runs containers.
+
+Kubernetes: Manages containerized applications.
+
+Cluster: Complete Kubernetes environment.
+
+Node: Machine in the cluster.
+
+Pod: Basic unit Kubernetes runs. Our Pod contains the FastAPI container.
+
+Deployment: Maintains the desired number/version of Pods.
+
+Service: Provides stable networking access to Pods.
+
+Scaling: Changes the number of Pod replicas.
+
+Recovery: Kubernetes recreates failed Pods to maintain desired state.
+
+============================================================ 11.13 —
+KUBERNETES DEPLOYMENT
+============================================================
+
+Folder: k8s/
+
+Deployment: k8s/deployment.yaml
+
+Deployment name: churn-api
+
+Image: churn-prediction-api:1.0
+
+Replicas: 1
+
+Container port: 8000
+
+Important: imagePullPolicy: IfNotPresent
+
+Apply: kubectl apply -f k8s/deployment.yaml
+
+Check: kubectl get deployments kubectl get pods
+
+Successful result: churn-api-84f5fcd955-kdj9j 1/1 Running 0
+
+Deployment: 1 desired | 1 updated | 1 total | 1 available | 0
+unavailable
+
+============================================================ 11.14 —
+KUBERNETES SERVICE & EXPOSURE
+============================================================
+
+Service file: k8s/service.yaml
+
+Service name: churn-api-service
+
+Type: NodePort
+
+Port: 8000
+
+TargetPort: 8000
+
+NodePort: 30383
+
+ClusterIP: 10.96.188.64
+
+Pod endpoint: 10.244.0.5:8000
+
+Apply: kubectl apply -f k8s/service.yaml
+
+Check: kubectl get services
+
+Observed: churn-api-service NodePort 10.96.188.64 8000:30383/TCP
+
+Check endpoint: kubectl get endpoints churn-api-service
+
+Observed: churn-api-service 10.244.0.5:8000
+
+Inspect: kubectl describe service churn-api-service
+
+Important fields: Selector: app=churn-api Type: NodePort Port: 8000/TCP
+TargetPort: 8000/TCP NodePort: 30383/TCP Endpoints: 10.244.0.5:8000
+
+Kubernetes warning: The v1 Endpoints API is deprecated in Kubernetes
+v1.33+. EndpointSlice is the newer API.
+
+============================================================ CURRENT
+KUBERNETES ARCHITECTURE
+============================================================
+
+Client ↓ Kubernetes Service churn-api-service NodePort 30383 ↓ Pod
+churn-api-84f5fcd955-kdj9j ↓ Container churn-prediction-api:1.0 ↓
+FastAPI :8000
+
+============================================================ NEXT STEPS
+============================================================
+
+11.15 — Scaling
+
+Scale to 3 replicas: kubectl scale deployment churn-api –replicas=3
+
+Check: kubectl get pods
+
+Expected: 3 running Pods.
+
+11.16 — Service Interruption
+
+Delete one Pod: kubectl delete pod
+
+Watch: kubectl get pods -w
+
+Kubernetes should automatically create a replacement because the
+Deployment still requires the desired replica count.
+
+11.17 — Recovery Validation
+
+Confirm replacement Pod becomes Running.
+
+Then validate: - /health - /metadata - /predict
+
+11.18 — Containerization Report
+
+Document: - Docker architecture - Dockerfile - .dockerignore -
+Deployment bundle - Container validation - Prediction consistency -
+Failure simulation - Recovery - Kubernetes Deployment - Kubernetes
+Service - Kubernetes scaling
+
+11.19 — Deployment & Debugging Report
+
+Document: Failure ↓ Detection ↓ Diagnosis ↓ Root cause ↓ Recovery ↓
+Validation
+
+11.20 — Final Lab 11 Validation
+
+Run: kubectl get nodes kubectl get deployments kubectl get pods kubectl
+get services
+
+Then validate the API.
+
+============================================================ LAB 12 —
+AFTER LAB 11
+============================================================
+
+12.1 Monitoring architecture 12.2 Request/inference logging 12.3
+Prediction distribution monitoring 12.4 Latency and throughput 12.5
+Failure/API monitoring 12.6 Data drift simulation 12.7 Prediction drift
+simulation 12.8 Drift analysis 12.9 Retraining 12.10 Model comparison
+12.11 Updated model validation 12.12 Deployment consistency 12.13
+Monitoring/retraining artifacts 12.14 Final MLOps validation
+
+End goal: Complete the MLOps project by the end of Lab 12.
+
+============================================================ QUICK
+COMMAND CHEAT SHEET
+============================================================
+
+DOCKER: docker ps docker ps -a docker images docker logs churn-api
+docker inspect churn-api docker stop churn-api docker rm churn-api
+docker build -t churn-prediction-api:1.0 . docker run –name churn-api -p
+8000:8000 churn-prediction-api:1.0
+
+KUBERNETES: kubectl cluster-info kubectl get nodes kubectl get
+deployments kubectl get pods kubectl get services kubectl get endpoints
+churn-api-service kubectl describe deployment churn-api kubectl describe
+service churn-api-service kubectl apply -f k8s/deployment.yaml kubectl
+apply -f k8s/service.yaml kubectl scale deployment churn-api –replicas=3
+kubectl delete pod kubectl get pods -w
+
+============================================================ CURRENT
+STATUS ============================================================
+
+Kubernetes cluster: RUNNING Node: desktop-control-plane Node status:
+Ready Deployment: churn-api Deployment replicas: 1 Pod: Running Service:
+churn-api-service Service type: NodePort Service port: 8000 NodePort:
+30383 Pod endpoint: 10.244.0.5:8000
+
+NEXT: 11.15 Kubernetes Scaling

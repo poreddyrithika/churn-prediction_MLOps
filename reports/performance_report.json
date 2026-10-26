@@ -1,0 +1,28 @@
+{
+    "lab": "Lab 10 - ML Model Serving and API Engineering using FastAPI",
+    "test_suite": "Performance and Reliability Testing",
+    "total_tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "status": "PASSED",
+    "metrics": {
+        "single_request_latency_ms": 75.37,
+        "repeated_requests": 20,
+        "average_latency_ms": 19.38,
+        "median_latency_ms": 18.79,
+        "minimum_latency_ms": 17.84,
+        "maximum_latency_ms": 23.89,
+        "reliability_requests": 50,
+        "successful_requests": 50,
+        "success_rate_percent": 100.0,
+        "batch_size": 20,
+        "batch_latency_ms": 21.34,
+        "throughput_requests_per_second": 51.68,
+        "prediction_consistency": true
+    },
+    "execution": {
+        "command": "pytest tests/test_performance.py -v -s",
+        "result": "6 passed"
+    },
+    "measurement_context": "Measurements were obtained using Starlette TestClient in the local development environment."
+}

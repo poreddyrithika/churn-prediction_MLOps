@@ -1,0 +1,35 @@
+name: Lab 13 - End-to-End MLOps
+# Integration test: process a genuinely new incoming batch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+      timezone: "Asia/Kolkata"
+
+jobs:
+  mlops-monitoring:
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+      - name: Run MLOps monitoring trigger
+        shell: powershell
+        run: |
+          Set-Location "C:\Users\jnane\Favorites\churn-prediction"
+          & ".\venv\Scripts\python.exe" ".\src\mlops_pipeline\12_monitor_trigger.py"
+
+      - name: Show monitoring result
+        shell: powershell
+        run: |
+          Set-Location "C:\Users\jnane\Favorites\churn-prediction"
+          if (Test-Path ".\outputs\monitoring\monitor_trigger_report.json") {
+              Get-Content ".\outputs\monitoring\monitor_trigger_report.json"
+          } else {
+              Write-Host "Monitoring report was not generated."
+          }
+
+      - name: Verify Kubernetes
+        shell: powershell
+        run: |
+          kubectl get deployment churn-api
+          kubectl get pods

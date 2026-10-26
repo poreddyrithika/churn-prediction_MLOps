@@ -1,0 +1,17 @@
+pip install pytest --no-cache-dir
+
+
+Stage 9 — API Testing
+
+We'll follow this order:
+
+9.1  Test /health
+9.2  Test /metadata
+9.3  Test valid /predict
+9.4  Test invalid /predict
+9.5  Test valid /predict/batch
+9.6  Test invalid /predict/batch
+9.7  Test missing fields
+9.8  Test invalid datatypes
+9.9  Test extreme inputs
+9.10 Run everything automatically

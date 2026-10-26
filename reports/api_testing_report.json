@@ -1,0 +1,27 @@
+{
+    "lab": "Lab 10 - ML Model Serving and API Engineering using FastAPI",
+    "test_suite": "API Functional and Robustness Testing",
+    "total_tests": 23,
+    "passed": 23,
+    "failed": 0,
+    "status": "PASSED",
+    "coverage": {
+        "health_endpoint": "PASSED",
+        "metadata_endpoint": "PASSED",
+        "single_prediction": "PASSED",
+        "batch_prediction": "PASSED",
+        "input_validation": "PASSED",
+        "missing_fields": "PASSED",
+        "invalid_datatypes": "PASSED",
+        "null_values": "PASSED",
+        "malformed_json": "PASSED",
+        "wrong_json_structure": "PASSED",
+        "invalid_batch_structure": "PASSED",
+        "extreme_values": "PASSED",
+        "large_batch": "PASSED"
+    },
+    "execution": {
+        "command": "pytest tests/test_api.py -v",
+        "result": "23 passed"
+    }
+}

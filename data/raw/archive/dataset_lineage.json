@@ -1,0 +1,32 @@
+[
+  {
+    "dataset_version": "v02",
+    "archive_file": "data/raw/archive/churn_v01.csv",
+    "source_file": "data/raw/new_churn.csv",
+    "new_data_hash": "3fd01ffe660483a231f5c6df8cb67d1287df1885159d51f75bdd437b0857dbdc",
+    "previous_rows": 7044,
+    "new_rows": 100,
+    "current_rows": 7144,
+    "timestamp": "2026-09-26T13:56:02.564687+00:00"
+  },
+  {
+    "dataset_version": "v03",
+    "archive_file": "data/raw/archive/churn_v02.csv",
+    "source_file": "data/raw/new_churn.csv",
+    "new_data_hash": "87f7b89a96318501939590048f382173bc639a3488f0877615145d5d0b10b0a4",
+    "previous_rows": 7144,
+    "new_rows": 100,
+    "current_rows": 7244,
+    "timestamp": "2026-09-26T14:32:40.825813+00:00"
+  },
+  {
+    "dataset_version": "v04",
+    "archive_file": "data/raw/archive/churn_v03.csv",
+    "source_file": "data/raw/new_churn.csv",
+    "new_data_hash": "0eb35ae7b184a85716fe0dee59fb93a1ee8bd119de898115d767f2b99671a7bc",
+    "previous_rows": 7244,
+    "new_rows": 100,
+    "current_rows": 7344,
+    "timestamp": "2026-09-29T13:02:13.573913+00:00"
+  }
+]

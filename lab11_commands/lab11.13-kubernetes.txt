@@ -1,0 +1,65 @@
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl cluster-info
+Kubernetes control plane is running at https://127.0.0.1:53353
+CoreDNS is running at https://127.0.0.1:53353/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl get nodes
+NAME                    STATUS   ROLES           AGE   VERSION
+desktop-control-plane   Ready    control-plane   62s   v1.36.1
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> mkdir k8s
+
+
+    Directory: C:\Users\jnane\Favorites\churn-prediction
+
+
+Mode                 LastWriteTime         Length Name                                                        
+----                 -------------         ------ ----                                                        
+d-----        25-09-2026     18:52                k8s                                                         
+
+
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl apply -f k8s/deployment.yaml
+deployment.apps/churn-api created
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl get deployments
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+churn-api   0/1     1            0           15s
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+churn-api-84f5fcd955-kdj9j   1/1     Running   0          29s
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl describe deployment churn-api
+Name:                   churn-api
+Namespace:              default
+CreationTimestamp:      Fri, 25 Sep 2026 18:55:12 +0530
+Labels:                 app=churn-api
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=churn-api
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=churn-api
+  Containers:
+   churn-api:
+    Image:         churn-prediction-api:1.0
+    Port:          8000/TCP
+    Host Port:     0/TCP
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   churn-api-84f5fcd955 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  43s   deployment-controller  Scaled up replica set churn-api-84f5fcd955 from 0 to 1
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> kubectl get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+churn-api-84f5fcd955-kdj9j   1/1     Running   0          80s
+(venv) PS C:\Users\jnane\Favorites\churn-prediction> 

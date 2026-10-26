@@ -30,7 +30,7 @@ def validate_preprocessing_outputs():
         errors.append("Row mismatch between X_train and y_train.")
         
     # 4. Generate Transformation Summary Report
-    report = {
+    report = {4
         "validation_status": "PASSED" if not errors else "FAILED",
         "matrix_dimensions": {
             "X_train_shape": list(X_train.shape),
